@@ -83,9 +83,12 @@ def main():
     svg = OUT / 'logo-hsi.svg'
 
     # Logo rasters
+    CACHE.mkdir(parents=True, exist_ok=True)
     render_svg(svg, 512, IMG / 'logo-hsi-512.png')
     logo = Image.open(IMG / 'logo-hsi-512.png').convert('RGBA')
-    logo.resize((48, 48), Image.LANCZOS).save(OUT / 'favicon.png', optimize=True)
+    # favicon: sphere only ("HSI" is unreadable at 16-48 px)
+    render_svg(OUT / 'logo-hsi-mark.svg', 192, CACHE / 'mark-192.png')
+    Image.open(CACHE / 'mark-192.png').convert('RGBA').resize((48, 48), Image.LANCZOS).save(OUT / 'favicon.png', optimize=True)
     touch = Image.new('RGBA', (180, 180), 'white')  # iOS ignores transparency
     touch.alpha_composite(logo.resize((148, 148), Image.LANCZOS), (16, 16))
     touch.convert('RGB').save(OUT / 'apple-touch-icon.png', optimize=True)

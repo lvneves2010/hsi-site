@@ -1,7 +1,7 @@
 # Draws the HSI logo as a clean vector (SVG), based on the original business-card logo:
 # a red sphere sliced like an orange (a curved top-left slice and a curved swoosh), plus "HSI".
 # Usage (from hsi-site/):
-#   python scripts/gerar_logo.py                  ->  public/logo-hsi.svg (variant VARIANT)
+#   python scripts/gerar_logo.py                  ->  public/logo-hsi.svg (variant VARIANT) and public/logo-hsi-mark.svg (sphere only, favicon)
 #   python scripts/gerar_logo.py --variants DIR   ->  DIR/logo-<variant>.svg for every variant (to compare)
 import math
 import sys
@@ -35,7 +35,7 @@ CB, RB = (0.0, 0.0), 0.0  # set by set_swoosh()
 CAP = 13.0  # cap height of "HSI" inside the sphere
 MARGIN = 2.5
 INK = '#1a1d24'
-VARIANT = 'inside'  # the one written to public/logo-hsi.svg
+VARIANT = 'neg-d2'  # the one written to public/logo-hsi.svg (chosen by Leonardo)
 # Top-left slice (as on the card): the upper piece is also cut by an arc parallel to the swoosh
 # (center shifted along it), which removes the top-left cap of the sphere. The logo then reads as
 # two curved slices, like an orange cut into segments. The arc meets the sphere at about -172 deg
@@ -284,7 +284,8 @@ def main():
         print('variants written to', out)
         return
     (ROOT / 'public/logo-hsi.svg').write_text(build(VARIANT), encoding='utf-8')
-    print('ok', VARIANT)
+    (ROOT / 'public/logo-hsi-mark.svg').write_text(build('mark'), encoding='utf-8')
+    print('ok', VARIANT, '+ mark')
 
 
 main()
