@@ -28,6 +28,9 @@ CB = (CA[0] + ALONG[0] * SHIFT, CA[1] + ALONG[1] * SHIFT)
 RB = RA + 24.0  # gap: ~18 at the left end, ~26 in the middle, ~29 at the right end (as on the card)
 CAP = 14.0  # cap height of "HSI"
 MARGIN = 2.5
+# Top slice (as on the card): the upper piece is cut by a straight line from the top of the sphere
+# down to the right end of the swoosh, leaving a thin white "slice" on the top right.
+TOP_CUT = math.radians(-96)  # where the cut meets the sphere (-90 = top; screen coordinates, y down)
 
 
 def lower_y(c, r, x):
@@ -67,6 +70,21 @@ def piece(c, r, keep_inside):
     away = math.atan2(-c[1], -c[0])
     cut_mid = (c[0] + r * math.cos(away), c[1] + r * math.sin(away))
     return f'M{p[0]:.2f} {p[1]:.2f} ' + arc_to((0, 0), R, p, q, sphere_mid) + ' ' + arc_to(c, r, q, p, cut_mid) + 'Z'
+
+
+def upper_piece():
+    """Sphere ∩ disk A, minus the top slice above the chord from TOP_CUT to the right end of arc A."""
+    p_left, p_right = sorted(circle_intersections((0, 0), R, CA, RA), key=lambda pt: pt[0])
+    top = (R * math.cos(TOP_CUT), R * math.sin(TOP_CUT))
+    away = math.atan2(-CA[1], -CA[0])
+    cut_mid = (CA[0] + RA * math.cos(away), CA[1] + RA * math.sin(away))
+    return (
+        f'M{top[0]:.2f} {top[1]:.2f} '
+        + arc_to((0, 0), R, top, p_left, (-R, 0))
+        + ' '
+        + arc_to(CA, RA, p_left, p_right, cut_mid)
+        + 'Z'
+    )
 
 
 def text_path(text, height, origin, tangent, up):
@@ -116,7 +134,7 @@ def place_label():
 
 
 def main():
-    upper = piece(CA, RA, keep_inside=True)
+    upper = upper_piece()
     lower = piece(CB, RB, keep_inside=False)
     label = place_label()
     pad = 2

@@ -22,7 +22,6 @@ function organization(lang: Lang) {
     '@id': `${company.siteUrl}/#organization`,
     name: company.name,
     alternateName: company.shortName,
-    legalName: company.legalName,
     taxID: company.cnpj,
     url: company.siteUrl + homePath(lang),
     logo: company.siteUrl + company.logoPng,

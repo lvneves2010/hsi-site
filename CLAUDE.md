@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Site da **Help Soluções em Informática (HSI)**, a empresa de Leonardo Neves (LEONARDO VINICIUS NEVES LTDA, CNPJ 31.412.990/0001-07). Apresenta os **serviços** da empresa (software sob encomenda, sites, apps, integrações/ERP, cloud, IA, consultoria, suporte e treinamento), os **apps Android próprios** e hospeda a **política de privacidade de cada app** (URL exigida pela Google Play). O site não deve parecer só de apps: os serviços vêm primeiro. Vite + React 19 + TypeScript, pré-renderizado em HTML estático e publicado no Firebase Hosting. Mesmo esquema do `leoneves-site` (pasta irmã), que é o portfólio pessoal; os dois sites têm links um para o outro.
+Site da **Help Soluções em Informática (HSI)**, a empresa de Leonardo Neves (CNPJ 31.412.990/0001-07). Apresenta os **serviços** da empresa (software sob encomenda, sites, apps, integrações/ERP, cloud, IA, consultoria, suporte e treinamento), os **apps Android próprios** e hospeda a **política de privacidade de cada app** (URL exigida pela Google Play). O site não deve parecer só de apps: os serviços vêm primeiro. Vite + React 19 + TypeScript, pré-renderizado em HTML estático e publicado no Firebase Hosting. Mesmo esquema do `leoneves-site` (pasta irmã), que é o portfólio pessoal; os dois sites têm links um para o outro.
 
 - Produção: https://hsi-help-solucoes.web.app
 - Firebase: projeto `hsi-help-solucoes` (plano Spark, gratuito), conta lvneves2010@gmail.com. O ID `helpsolucoes` já estava tomado.
@@ -38,11 +38,12 @@ Antes de publicar: `npm run build` e `npx eslint .` sem erros. Depois, confira o
 ## Regras
 
 - **Dados da empresa** vêm do cadastro público do CNPJ (início de atividade 03/09/2018; CNAE principal 6201-5/01 software sob encomenda; secundários: consultoria em TI, suporte/manutenção e treinamento em informática). Os serviços seguem esses CNAEs e o currículo do Leonardo (`../leoneves-site`). A consultoria própria de 2013–2018 aparece no currículo como "Symcon Group / HSI".
+- **A razão social não aparece no site** (pedido do Leonardo): só o nome fantasia e o CNPJ, discreto no rodapé e nas políticas.
 - Empresas como IBM, Sony, Bradesco e Jadlog aparecem só como **carreira do fundador**, nunca como clientes da HSI.
 
 - **Em produção as páginas não carregam React**: são HTML estático e não há nenhuma interatividade. `src/main.tsx` só importa CSS e fonte; o React roda no cliente apenas no `npm run dev`. Se um dia precisar de interatividade, use `hydrateRoot` como no `leoneves-site`.
 - **Tema claro por padrão**, mesmo com o navegador em modo escuro (pedido do Leonardo). O escuro só entra pelo botão do topo e fica salvo no `localStorage`; o script inline do `index.html` aplica antes do primeiro paint.
-- **Logo:** `public/logo-hsi.svg` é a versão moderna do logo do cartão de visita (esfera vermelha cortada por uma faixa curva, "HSI" na abertura da direita, acompanhando a faixa). Geometria em `gerar_logo.py`; texto em Inter Bold convertido em contorno. Depois de mudar, rode `npm run logo && npm run images`. **Os apps ainda usam o logo antigo** (`logo_hsi.png` em cada app): o Leonardo quer aprovar o novo no site antes de trocar nos apps.
+- **Logo:** `public/logo-hsi.svg` é a versão moderna do logo do cartão de visita (esfera vermelha com uma fatia reta tirada do topo à direita e cortada por uma faixa curva, "HSI" na abertura da direita, acompanhando a faixa). Geometria em `gerar_logo.py`; texto em Inter Bold convertido em contorno. Depois de mudar, rode `npm run logo && npm run images`. **Os apps ainda usam o logo antigo** (`logo_hsi.png` em cada app): o Leonardo quer aprovar o novo no site antes de trocar nos apps.
 - **Fotos:** só do Wikimedia Commons com licença **CC0 ou domínio público**; registre cada uma em `public/img/services/CREDITS.md`. Três vêm do `leoneves-site` (integração, cloud, IA).
 - **Novo app:** adicione o item em `apps` (`site.ts`), os textos em `pt.tsx` e `en.tsx` (o TypeScript acusa o que faltar), o ícone em `APPS` no `gerar_imagens.py` e rode `npm run images`. Rotas, sitemap e rodapé saem sozinhos.
 - **App publicado na Play:** mude `published` para `true`. O botão "Em breve" vira o link da Play e o JSON-LD ganha `installUrl`.

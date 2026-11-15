@@ -27,8 +27,7 @@ export const pt: Content = {
     skip: 'Pular para o conteúdo',
     menu: 'Menu',
     toggleTheme: 'Alternar tema claro/escuro',
-    otherLang: 'EN',
-    otherLangName: 'English',
+    langName: 'Português',
     home: 'Início',
     seeDetails: 'Ver detalhes',
     soon: 'Em breve na Google Play',
@@ -90,7 +89,7 @@ export const pt: Content = {
       </>,
     ],
     founderRole: 'Fundador · Engenheiro de Software Sênior',
-    founderLink: 'Ver currículo',
+    founderLink: 'Saiba mais',
     ctaTitle: 'Vamos tirar o seu projeto do papel?',
     ctaText: 'Conte o que você precisa. Respondemos com uma proposta sem compromisso.',
     ctaButton: 'Falar com a HSI',
@@ -109,7 +108,7 @@ export const pt: Content = {
     code: {
       title: 'Sistemas sob encomenda',
       text: 'Sistemas web e APIs feitos sob medida para o seu negócio, do levantamento de requisitos à produção.',
-      tech: ['C#/.NET', 'Java', 'Node.js', 'Python'],
+      tech: ['C#/.NET', 'Java', 'TypeScript', 'Node.js', 'Python'],
     },
     web: {
       title: 'Sites e aplicações web',
@@ -119,7 +118,7 @@ export const pt: Content = {
     mobile: {
       title: 'Apps para celular',
       text: 'Apps Android e iOS, da ideia à publicação na loja, com a mesma experiência dos nossos apps próprios.',
-      tech: ['Ionic', 'Capacitor', 'Flutter'],
+      tech: ['Ionic', 'Capacitor', 'Flutter', 'React Native'],
     },
     integration: {
       title: 'Integrações e ERP',
@@ -292,8 +291,7 @@ export const pt: Content = {
     intro: (
       <>
         Esta política explica como o app <strong>{app.name}</strong> (Android, pacote <code>{app.packageId}</code>) trata as
-        suas informações. O app é desenvolvido por {company.legalName}, nome fantasia {company.name} ({company.shortName}), CNPJ{' '}
-        {company.cnpj}, com sede em {company.city} – {company.state}, que é a controladora dos dados nos termos da Lei Geral de
+        suas informações. O app é desenvolvido pela {company.name} ({company.shortName}), CNPJ {company.cnpj}, com sede em {company.city} – {company.state}, que é a controladora dos dados nos termos da Lei Geral de
         Proteção de Dados (LGPD, Lei 13.709/2018).
       </>
     ),
@@ -402,7 +400,7 @@ export const pt: Content = {
         title: '9. Contato',
         body: (
           <p>
-            {company.legalName} ({company.name}) · CNPJ {company.cnpj}
+            {company.name} ({company.shortName}) · CNPJ {company.cnpj}
             <br />
             E-mail: {mail}
           </p>

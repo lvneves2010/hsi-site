@@ -32,8 +32,7 @@ export interface Content {
     skip: string
     menu: string
     toggleTheme: string
-    otherLang: string // label of the language switch (the other language)
-    otherLangName: string
+    langName: string // name of this language, for the language switch
     home: string
     seeDetails: string
     soon: string

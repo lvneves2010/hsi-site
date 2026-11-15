@@ -1,5 +1,6 @@
 import { apps, company, playUrl, serviceKeys, type AppInfo } from './data/site'
 import { content, type Content, type Lang } from './i18n'
+import { FlagBR, FlagUK } from './Flags'
 import { appPath, homePath, langFromPath, pathIn, privacyPath, resolveRoute, type Route } from './routes'
 
 type T = { t: Content; lang: Lang }
@@ -28,7 +29,6 @@ function Header({ t, lang, route }: T & { route?: Route }) {
     ['#about', t.nav.about],
     ['#contact', t.nav.contact],
   ] as const
-  const other: Lang = lang === 'pt' ? 'en' : 'pt'
   return (
     <header className="header">
       <a className="skip" href="#main">
@@ -50,9 +50,23 @@ function Header({ t, lang, route }: T & { route?: Route }) {
           ))}
         </nav>
         <div className="header-actions">
-          <a className="lang-switch" href={pathIn(route, other)} hrefLang={content[other].htmlLang} lang={content[other].htmlLang} title={t.ui.otherLangName}>
-            {t.ui.otherLang}
-          </a>
+          <div className="lang-switch" role="group" aria-label="Idioma / Language">
+            {(['pt', 'en'] as const).map(l => (
+              <a
+                key={l}
+                href={pathIn(route, l)}
+                hrefLang={content[l].htmlLang}
+                lang={content[l].htmlLang}
+                className={l === lang ? 'active' : undefined}
+                aria-current={l === lang ? 'true' : undefined}
+                aria-label={content[l].ui.langName}
+                title={content[l].ui.langName}
+              >
+                {l === 'pt' ? <FlagBR /> : <FlagUK />}
+                <span>{l.toUpperCase()}</span>
+              </a>
+            ))}
+          </div>
           <button type="button" className="icon-btn" data-theme-toggle aria-label={t.ui.toggleTheme} title={t.ui.toggleTheme}>
             <ThemeIcon />
           </button>
@@ -87,8 +101,6 @@ function Footer({ t, lang }: T) {
           </div>
           <p className="muted small">{t.ui.footerAbout}</p>
           <p className="muted small">
-            {company.legalName} · <span className="nowrap">CNPJ {company.cnpj}</span>
-            <br />
             {company.city} – {company.state}, {lang === 'pt' ? 'Brasil' : 'Brazil'} · {t.ui.since} {company.foundingYear}
           </p>
         </div>
@@ -113,7 +125,10 @@ function Footer({ t, lang }: T) {
         </div>
       </div>
       <div className="container footer-bottom muted small">
-        © {company.lastUpdated.slice(0, 4)} {company.name} ({company.shortName})
+        <span>
+          © {company.lastUpdated.slice(0, 4)} {company.name} ({company.shortName})
+        </span>
+        <span className="cnpj">CNPJ {company.cnpj}</span>
       </div>
     </footer>
   )

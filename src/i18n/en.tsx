@@ -24,8 +24,7 @@ export const en: Content = {
     skip: 'Skip to content',
     menu: 'Menu',
     toggleTheme: 'Toggle light/dark theme',
-    otherLang: 'PT',
-    otherLangName: 'Português',
+    langName: 'English',
     home: 'Home',
     seeDetails: 'See details',
     soon: 'Coming soon to Google Play',
@@ -87,7 +86,7 @@ export const en: Content = {
       </>,
     ],
     founderRole: 'Founder · Senior Software Engineer',
-    founderLink: 'View résumé',
+    founderLink: 'Learn more',
     ctaTitle: "Let's get your project off the ground?",
     ctaText: "Tell us what you need. We'll reply with a no-strings proposal.",
     ctaButton: 'Talk to HSI',
@@ -106,7 +105,7 @@ export const en: Content = {
     code: {
       title: 'Custom software',
       text: 'Web systems and APIs tailored to your business, from requirements to production.',
-      tech: ['C#/.NET', 'Java', 'Node.js', 'Python'],
+      tech: ['C#/.NET', 'Java', 'TypeScript', 'Node.js', 'Python'],
     },
     web: {
       title: 'Websites and web apps',
@@ -116,7 +115,7 @@ export const en: Content = {
     mobile: {
       title: 'Mobile apps',
       text: 'Android and iOS apps, from idea to store release, with the same care we put into our own apps.',
-      tech: ['Ionic', 'Capacitor', 'Flutter'],
+      tech: ['Ionic', 'Capacitor', 'Flutter', 'React Native'],
     },
     integration: {
       title: 'Integrations and ERP',
@@ -284,8 +283,8 @@ export const en: Content = {
     intro: (
       <>
         This policy explains how the <strong>{app.name}</strong> app (Android, package <code>{app.packageId}</code>) handles
-        your information. The app is developed by {company.legalName}, trading as {company.name} ({company.shortName}),
-        Brazilian company registration (CNPJ) {company.cnpj}, based in {company.city}, São Paulo, Brazil, which is the data
+        your information. The app is developed by {company.name} ({company.shortName}), Brazilian company registration
+        (CNPJ) {company.cnpj}, based in {company.city}, São Paulo, Brazil, which is the data
         controller under the Brazilian General Data Protection Law (LGPD, Law 13,709/2018).
       </>
     ),
@@ -393,7 +392,7 @@ export const en: Content = {
         title: '9. Contact',
         body: (
           <p>
-            {company.legalName} ({company.name}) · CNPJ {company.cnpj}
+            {company.name} ({company.shortName}) · CNPJ {company.cnpj}
             <br />
             Email: {mail}
           </p>

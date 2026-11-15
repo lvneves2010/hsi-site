@@ -3,7 +3,6 @@
 export const company = {
   shortName: 'HSI',
   name: 'Help Soluções em Informática',
-  legalName: 'LEONARDO VINICIUS NEVES LTDA',
   cnpj: '31.412.990/0001-07',
   city: 'Guarulhos',
   state: 'SP',

@@ -166,17 +166,36 @@ code {
   gap: 6px;
 }
 .lang-switch {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.lang-switch a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 4px 10px;
+  padding: 0 10px;
+  height: 34px;
 }
-.lang-switch:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+.lang-switch a:hover {
+  color: var(--text);
   text-decoration: none;
+}
+.lang-switch a.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.flag {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.12);
+  flex: none;
 }
 .icon-btn {
   display: inline-grid;
@@ -702,6 +721,14 @@ code {
   margin-top: 32px;
   padding-top: 18px;
   border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+}
+.cnpj {
+  font-size: 0.75rem;
+  opacity: 0.75;
 }
 
 /* Scroll reveal (only when JS is on; see main.tsx) */
@@ -777,6 +804,12 @@ code {
   }
   .brand-sub {
     display: none;
+  }
+  .lang-switch a span {
+    display: none;
+  }
+  .lang-switch a {
+    padding: 0 8px;
   }
   .process {
     grid-template-columns: 1fr;
