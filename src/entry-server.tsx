@@ -33,7 +33,8 @@ function organization(lang: Lang) {
       '@type': 'Offer',
       itemOffered: { '@type': 'Service', name: t.services[k].title, description: t.services[k].text },
     })),
-    founder: { '@type': 'Person', name: company.founder, url: company.founderUrl[lang] },
+    // Same @id as the Person in the founder's portfolio JSON-LD, so search engines link both entities.
+    founder: { '@type': 'Person', '@id': 'https://leoneves-eng-de-software.web.app/#person', name: company.founder, url: company.founderUrl[lang] },
     address: { '@type': 'PostalAddress', addressLocality: company.city, addressRegion: company.state, addressCountry: 'BR' },
   }
 }

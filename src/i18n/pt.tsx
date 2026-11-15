@@ -184,6 +184,7 @@ export const pt: Content = {
         'Sem cadastro e sem login',
       ],
       keywords: 'placar de truco, marcador de truco, placar de dominó, placar de buraco, contador de pontos',
+      seoTitle: 'Marcador de Jogos – Placar de truco, dominó e buraco',
       privacy: {
         onDevice: ['Placar das partidas e nomes dos jogadores do dominó.'],
         permissions: [internetAdsOnly],
@@ -256,6 +257,7 @@ export const pt: Content = {
         'Sem cadastro e sem login; a vaga fica só no celular',
       ],
       keywords: 'onde estacionei, achar carro estacionado, localizar carro, marcar vaga, estacionamento',
+      seoTitle: 'My Spot – App para achar o carro estacionado',
       privacy: {
         onDevice: ['A última vaga marcada: coordenadas, precisão do GPS, data e hora e a anotação que você escrever.'],
         permissions: [
@@ -409,18 +411,18 @@ export const pt: Content = {
     ],
   }),
   seo: {
-    homeTitle: `${company.name} (${company.shortName}) · Software, sites e apps em ${company.city}`,
+    homeTitle: `HSI – Software, sites e apps sob encomenda | ${company.city}`,
     homeDescription:
-      `HSI – Help Soluções em Informática, desde ${company.foundingYear} em ${company.city}–${company.state}: software sob encomenda, ` +
-      'sites, apps para celular, integrações, cloud e consultoria em TI. Apps próprios: PlanEvento, Marcador de Jogos, K.I.R.A. e My Spot.',
+      `Help Soluções em Informática (HSI), desde ${company.foundingYear} em ${company.city}–${company.state}: software sob encomenda, ` +
+      'sites, apps, integrações e consultoria em TI.',
     homeKeywords:
       'desenvolvimento de software, software sob encomenda, criação de sites, desenvolvimento de apps, consultoria em TI, ' +
       `integração de sistemas, ${company.city}, HSI, Help Soluções em Informática`,
-    appTitle: (app, t) => `${app.name}: ${t.tagline.replace(/\.$/, '')} · ${company.shortName}`,
-    appDescription: (_app, t) => `${t.description[0]} App para Android da ${company.name}.`,
-    privacyTitle: app => `Política de privacidade · ${app.name} · ${company.shortName}`,
+    appTitle: (app, t) => `${t.seoTitle ?? `${app.name} – ${t.categoryLabel} para Android`} | ${company.shortName}`,
+    appDescription: (_app, t) => `${t.tagline} App gratuito para Android, sem cadastro, da ${company.name}.`,
+    privacyTitle: app => `Política de privacidade do ${app.name} | ${company.shortName}`,
     privacyDescription: app =>
-      `Política de privacidade do app ${app.name} para Android, da ${company.name} (${company.shortName}): quais dados o app usa, permissões, anúncios e como apagar seus dados.`,
+      `Política de privacidade do app ${app.name} (Android): dados usados, permissões, anúncios e como apagar seus dados.`,
     crumbHome: 'Início',
     crumbPrivacy: 'Política de privacidade',
   },

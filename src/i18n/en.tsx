@@ -181,6 +181,7 @@ export const en: Content = {
         'No sign-up or login',
       ],
       keywords: 'truco score, truco scoreboard, dominoes score, buraco score, score counter',
+      seoTitle: 'Marcador de Jogos – Truco and dominoes scorekeeper',
       privacy: {
         onDevice: ['Game scores and the names of domino players.'],
         permissions: [internetAdsOnly],
@@ -401,18 +402,18 @@ export const en: Content = {
     ],
   }),
   seo: {
-    homeTitle: `${company.name} (${company.shortName}) · Software, websites and apps, Brazil`,
+    homeTitle: 'HSI – Custom software, websites and apps | Brazil',
     homeDescription:
-      `HSI – Help Soluções em Informática, since ${company.foundingYear} in ${company.city}, Brazil: custom software, websites, ` +
-      'mobile apps, integrations, cloud and IT consulting. Own apps: PlanEvento, Marcador de Jogos, K.I.R.A. and My Spot.',
+      `Help Soluções em Informática (HSI), since ${company.foundingYear} in ${company.city}, Brazil: custom software, websites, ` +
+      'mobile apps, integrations and IT consulting.',
     homeKeywords:
       'software development, custom software, website development, app development, IT consulting, systems integration, ' +
       'Brazil, nearshore, HSI, Help Soluções em Informática',
-    appTitle: (app, t) => `${app.name}: ${t.tagline.replace(/\.$/, '')} · ${company.shortName}`,
-    appDescription: (_app, t) => `${t.description[0]} Android app by ${company.name}.`,
-    privacyTitle: app => `Privacy policy · ${app.name} · ${company.shortName}`,
+    appTitle: (app, t) => `${t.seoTitle ?? `${app.name} – ${t.categoryLabel} app for Android`} | ${company.shortName}`,
+    appDescription: (_app, t) => `${t.tagline} Free Android app, no sign-up, by ${company.name}.`,
+    privacyTitle: app => `${app.name} privacy policy | ${company.shortName}`,
     privacyDescription: app =>
-      `Privacy policy of the ${app.name} Android app by ${company.name} (${company.shortName}): what data the app uses, permissions, ads and how to delete your data.`,
+      `Privacy policy of the ${app.name} Android app: data used, permissions, ads and how to delete your data.`,
     crumbHome: 'Home',
     crumbPrivacy: 'Privacy policy',
   },

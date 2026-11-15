@@ -11,6 +11,8 @@ export type AppText = {
   description: string[]
   features: string[]
   keywords: string
+  /** Overrides the default "<name> – <category> for Android" in the page title (keep it under ~60 chars with " | HSI"). */
+  seoTitle?: string
   privacy: {
     /** What the app stores, always only on the device. */
     onDevice: string[]
