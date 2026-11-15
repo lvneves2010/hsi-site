@@ -1,8 +1,10 @@
 # Draws the HSI logo as a clean vector (SVG), based on the original business-card logo:
-# a red sphere split by a curved white swoosh into a large upper piece and a lower crescent,
-# with "HSI" in the opening of the swoosh on the right.
-# Usage (from hsi-site/): python scripts/gerar_logo.py  ->  public/logo-hsi.svg
+# a red sphere sliced like an orange (a curved top-left slice and a curved swoosh), plus "HSI".
+# Usage (from hsi-site/):
+#   python scripts/gerar_logo.py                  ->  public/logo-hsi.svg (variant VARIANT)
+#   python scripts/gerar_logo.py --variants DIR   ->  DIR/logo-<variant>.svg for every variant (to compare)
 import math
+import sys
 from pathlib import Path
 
 from fontTools.pens.svgPathPen import SVGPathPen
@@ -23,11 +25,17 @@ ALONG = (math.cos(TILT), -math.sin(TILT))  # points along the swoosh, to the rig
 D = 170.0
 CA = (NORMAL[0] * D, NORMAL[1] * D)
 RA = D + 12.0
-SHIFT = 20.0
-CB = (CA[0] + ALONG[0] * SHIFT, CA[1] + ALONG[1] * SHIFT)
-RB = RA + 28.6  # gap: ~17 at the left end, ~27 in the middle, ~39 at the right end, where "HSI" sits
-CAP = 13.0  # cap height of "HSI"
+# B (lower edge of the swoosh) per variant: (shift along the swoosh, RB - RA).
+# With "HSI" inside the sphere the opening on the right must be wider.
+SWOOSH = {
+    'card': (10.0, 24.0),  # gap ~18 left, ~26 middle, ~29 right (as on the card)
+    'wide': (20.0, 28.6),  # gap ~17 left, ~27 middle, ~39 right, room for a horizontal "HSI"
+}
+CB, RB = (0.0, 0.0), 0.0  # set by set_swoosh()
+CAP = 13.0  # cap height of "HSI" inside the sphere
 MARGIN = 2.5
+INK = '#1a1d24'
+VARIANT = 'inside'  # the one written to public/logo-hsi.svg
 # Top-left slice (as on the card): the upper piece is also cut by an arc parallel to the swoosh
 # (center shifted along it), which removes the top-left cap of the sphere. The logo then reads as
 # two curved slices, like an orange cut into segments. The arc meets the sphere at about -172 deg
@@ -35,6 +43,13 @@ MARGIN = 2.5
 CUT_SHIFT = -21.0
 CC = (CA[0] + ALONG[0] * CUT_SHIFT, CA[1] + ALONG[1] * CUT_SHIFT)
 RC = 118.0
+
+
+def set_swoosh(kind):
+    global CB, RB
+    shift, dr = SWOOSH[kind]
+    CB = (CA[0] + ALONG[0] * shift, CA[1] + ALONG[1] * shift)
+    RB = RA + dr
 
 
 def lower_y(c, r, x):
@@ -98,11 +113,26 @@ def upper_piece():
     )
 
 
-def text_path(text, height, origin, tangent, up):
-    """Outline of `text` in Inter Bold with cap height `height`, baseline starting at `origin`,
-    running along the unit vector `tangent`, with glyph "up" along the unit vector `up`."""
-    woff = ROOT / 'node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2'
-    font = instantiateVariableFont(TTFont(woff), {'wght': 700})
+_fonts = {}
+
+
+def _font(weight):
+    if weight not in _fonts:
+        woff = ROOT / 'node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2'
+        _fonts[weight] = instantiateVariableFont(TTFont(woff), {'wght': weight})
+    return _fonts[weight]
+
+
+def text_width(text, height, weight=700):
+    font = _font(weight)
+    glyphs, cmap = font.getGlyphSet(), font.getBestCmap()
+    return sum(glyphs[cmap[ord(ch)]].width for ch in text) * height / font['OS/2'].sCapHeight
+
+
+def text_path(text, height, origin, tangent=(1, 0), up=(0, -1), weight=700):
+    """Outline of `text` in Inter (given weight) with cap height `height`, baseline starting at
+    `origin`, running along the unit vector `tangent`, with glyph "up" along the unit vector `up`."""
+    font = _font(weight)
     glyphs, cmap = font.getGlyphSet(), font.getBestCmap()
     s = height / font['OS/2'].sCapHeight
     out, advance = [], 0.0
@@ -133,18 +163,68 @@ def place_label():
     raise SystemExit('label does not fit')
 
 
-def main():
-    upper = upper_piece()
-    lower = piece(CB, RB, keep_inside=False)
-    label = place_label()
-    pad = 2
-    vb = f'{-R - pad} {-R - pad} {2 * (R + pad)} {2 * (R + pad)}'
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vb}" role="img" aria-label="HSI">'
-        f'<g fill="{RED}"><path d="{upper}"/><path d="{lower}"/><path d="{label}"/></g></svg>\n'
+def svg(view, paths):
+    """paths: list of (d, fill)."""
+    x0, y0, x1, y1 = view
+    body = ''.join(f'<path fill="{fill}" d="{d}"/>' for d, fill in paths)
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0:.1f} {y0:.1f} {x1 - x0:.1f} {y1 - y0:.1f}" '
+        f'role="img" aria-label="HSI">{body}</svg>\n'
     )
-    (ROOT / 'public/logo-hsi.svg').write_text(svg, encoding='utf-8')
-    print('ok', len(svg), 'bytes')
+
+
+def build(variant):
+    """Return the SVG of one variant."""
+    set_swoosh('wide' if variant == 'inside' else 'card')
+    mark = [(upper_piece(), RED), (piece(CB, RB, keep_inside=False), RED)]
+    pad = 2
+    if variant == 'inside':  # "HSI" in the swoosh opening, inside the sphere
+        return svg((-R - pad, -R - pad, R + pad, R + pad), mark + [(place_label(), RED)])
+    if variant == 'mark':  # sphere only (favicon, app footers)
+        return svg((-R - pad, -R - pad, R + pad, R + pad), mark)
+    if variant == 'side':  # big "HSI" to the right of the sphere
+        cap = 64.0
+        x = R + 30
+        w = text_width('HSI', cap)
+        return svg((-R - pad, -R - pad, x + w + pad, R + pad), mark + [(text_path('HSI', cap, (x, cap / 2)), RED)])
+    if variant == 'exit':  # "HSI" just outside the sphere, where the swoosh leaves it
+        a_right = max(circle_intersections((0, 0), R, CA, RA), key=lambda p: p[0])
+        b_right = max(circle_intersections((0, 0), R, CB, RB), key=lambda p: p[0])
+        y_mid = (a_right[1] + b_right[1]) / 2
+        cap = 30.0
+        x = math.sqrt(R * R - y_mid * y_mid) + 10
+        w = text_width('HSI', cap)
+        return svg((-R - pad, -R - pad, x + w + pad, R + pad), mark + [(text_path('HSI', cap, (x, y_mid + cap / 2)), RED)])
+    if variant == 'below':  # "HSI" centered under the sphere
+        cap = 44.0
+        w = text_width('HSI', cap)
+        base = R + 22 + cap
+        return svg((-R - pad, -R - pad, R + pad, base + pad), mark + [(text_path('HSI', cap, (-w / 2, base)), RED)])
+    if variant == 'lockup':  # sphere + "HSI" + company name (header)
+        cap, cap2 = 70.0, 15.5
+        x = R + 30
+        name = 'Help Soluções em Informática'
+        w = max(text_width('HSI', cap), text_width(name, cap2, 500))
+        return svg(
+            (-R - pad, -R - pad, x + w + pad, R + pad),
+            mark + [(text_path('HSI', cap, (x, 18)), RED), (text_path(name, cap2, (x, 18 + 22 + cap2), weight=500), INK)],
+        )
+    raise SystemExit(f'unknown variant {variant}')
+
+
+VARIANTS = ['inside', 'mark', 'side', 'exit', 'below', 'lockup']
+
+
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == '--variants':
+        out = Path(sys.argv[2])
+        out.mkdir(parents=True, exist_ok=True)
+        for v in VARIANTS:
+            (out / f'logo-{v}.svg').write_text(build(v), encoding='utf-8')
+        print('variants written to', out)
+        return
+    (ROOT / 'public/logo-hsi.svg').write_text(build(VARIANT), encoding='utf-8')
+    print('ok', VARIANT)
 
 
 main()
