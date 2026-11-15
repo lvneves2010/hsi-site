@@ -164,92 +164,46 @@ def place_label():
     raise SystemExit('label does not fit')
 
 
-def cap_label(gap, spacing, edge, xscale=0.82, weight=800, spread=None, cc=None, rc=None, uniform=False):
-    """Stylized "HSI" filling the top-left slice. Glyphs follow arc C (parallel to the slices) with their
-    tops toward the outside of the sphere, centered where the slice is thickest. Each letter is as tall as
-    the slice allows where it sits (so the middle "S" is the biggest), keeping `gap` from the upper piece
-    and `edge` from the sphere outline. Glyphs are condensed by `xscale`."""
+def neg_label(where, weight, tracking, scale, margin=7.0):
+    """Horizontal "HSI" inside the lower slice (sphere outside disk B), keeping `margin` from its edges.
+    Always horizontally centered. where='low': the vertical position where it can be biggest;
+    'mid': vertically centered between the swoosh and the bottom of the sphere."""
     font = _font(weight)
     glyphs, cmap = font.getGlyphSet(), font.getBestCmap()
     capu = font['OS/2'].sCapHeight
-    CC_, RC_ = cc or CC, rc or RC
-    phi0 = math.atan2(-CC_[1], -CC_[0])  # direction from the cut center to the sphere center: thickest part
-    rb = RC_ - gap  # baseline radius around the cut center (glyph tops point to it)
-    c_left, c_top = sorted(circle_intersections((0, 0), R, CC_, RC_), key=lambda pt: pt[0])
-    ang = lambda pt: math.atan2(pt[1] - CC_[1], pt[0] - CC_[0])
-    span = ang(c_left) - ang(c_top)
+    adv = [glyphs[cmap[ord(ch)]].width / capu for ch in 'HSI']  # advances per unit of cap height
+    width_per_cap = sum(adv) + tracking * 2
 
-    def place(caps):
-        widths = [glyphs[cmap[ord(ch)]].width * c / capu * xscale for ch, c in zip('HSI', caps)]
-        gaps = spacing * sum(caps) / 3 * 2
-        if spread:  # spread the letters over a fraction of the slice
-            gaps = max(gaps, span * spread * rb - sum(widths))
-        total = sum(widths) + gaps
-        phi = phi0 + total / rb / 2  # reading direction decreases phi (from lower left to top)
-        out = []
-        for ch, w, cap in zip('HSI', widths, caps):
-            pc = phi - (w / 2) / rb
-            tangent = (math.sin(pc), -math.cos(pc))
-            up = (-math.cos(pc), -math.sin(pc))
-            mid = (CC_[0] + rb * math.cos(pc), CC_[1] + rb * math.sin(pc))
-            origin = (mid[0] - tangent[0] * w / 2, mid[1] - tangent[1] * w / 2)
-            sx, sy = cap / capu * xscale, cap / capu
-            corners = [(origin[0] + tangent[0] * gx + up[0] * gy, origin[1] + tangent[1] * gx + up[1] * gy)
-                       for gx in (0, w / 2, w) for gy in (0, cap)]
-            out.append((ch, origin, tangent, up, sx, sy, corners))
-            phi -= (w + gaps / 2) / rb
-        return out
+    def fits(cap, cx, cy):
+        w = width_per_cap * cap
+        pts = [(cx + dx, cy + dy) for dx in (-w / 2, 0, w / 2) for dy in (-cap / 2, cap / 2)]
+        return all(math.hypot(*p) <= R - margin and math.dist(p, CB) >= RB + margin for p in pts)
 
-    ok = lambda c: math.hypot(*c) <= R - edge and math.dist(c, CC_) <= RC_ - gap + 0.5
-    caps = [60.0, 60.0, 60.0]
-    for _ in range(400):  # shrink each letter until all of them fit; repeat since positions depend on sizes
-        laid = place(caps)
-        bad = [i for i, g in enumerate(laid) if not all(ok(c) for c in g[6])]
-        if not bad:
-            break
-        for i in bad:
-            caps[i] -= 0.5
+    def biggest(cx, cy):
+        lo, hi = 0.0, 80.0
+        for _ in range(30):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if fits(mid, cx, cy) else (lo, mid)
+        return lo
+
+    if where == 'mid':
+        cy = (lower_y(CB, RB, 0.0) + R) / 2
+        best = (biggest(0.0, cy), 0.0, cy)
     else:
-        raise SystemExit('cap label does not fit')
-    if uniform:  # same size for every letter (the smallest one fits everywhere)
-        caps = [min(caps)] * 3
-        laid = place(caps)
-    paths = []
-    for ch, origin, tangent, up, sx, sy, _ in laid:
-        pen = SVGPathPen(glyphs)
-        glyphs[cmap[ord(ch)]].draw(TransformPen(pen, (sx * tangent[0], sx * tangent[1], sy * up[0], sy * up[1], *origin)))
-        paths.append(pen.getCommands())
-    return ' '.join(paths), caps
-
-
-def clipped_cap_label(gap, cap, fill, xscale=0.9, weight=800):
-    """Big "HSI" along arc C, spread over `fill` of the top-left slice and clipped to the slice
-    (sphere ∩ disk(CC, RC - gap)), so the letter edges complete the sphere outline."""
-    font = _font(weight)
-    glyphs, cmap = font.getGlyphSet(), font.getBestCmap()
-    capu = font['OS/2'].sCapHeight
-    c_left, c_top = sorted(circle_intersections((0, 0), R, CC, RC), key=lambda pt: pt[0])
-    ang = lambda pt: math.atan2(pt[1] - CC[1], pt[0] - CC[0])
-    span = ang(c_left) - ang(c_top)  # angular length of the slice seen from CC
-    phi0 = (ang(c_left) + ang(c_top)) / 2
-    rb = RC - gap
-    sx, sy = cap / capu * xscale, cap / capu
-    widths = [glyphs[cmap[ord(ch)]].width * sx for ch in 'HSI']
-    target = span * fill * rb
-    spacing = (target - sum(widths)) / 2
-    phi = phi0 + target / rb / 2
+        best = max((biggest(0.0, cy2 / 2), 0.0, cy2 / 2) for cy2 in range(0, 200))
+    cap, cx, cy = best
+    cap *= scale
+    s = cap / capu
+    x = cx - width_per_cap * cap / 2
+    base = cy + cap / 2
     out = []
-    for ch, w in zip('HSI', widths):
-        pc = phi - (w / 2) / rb
-        tangent = (math.sin(pc), -math.cos(pc))
-        up = (-math.cos(pc), -math.sin(pc))
-        mid = (CC[0] + rb * math.cos(pc), CC[1] + rb * math.sin(pc))
-        origin = (mid[0] - tangent[0] * w / 2, mid[1] - tangent[1] * w / 2)
+    for ch, a in zip('HSI', adv):
         pen = SVGPathPen(glyphs)
-        glyphs[cmap[ord(ch)]].draw(TransformPen(pen, (sx * tangent[0], sx * tangent[1], sy * up[0], sy * up[1], *origin)))
+        glyphs[cmap[ord(ch)]].draw(TransformPen(pen, (s, 0, 0, -s, x, base)))
         out.append(pen.getCommands())
-        phi -= (w + spacing) / rb
-    return ' '.join(out), rb
+        x += (a + tracking) * cap
+    print(f'  neg {where}: cap {cap:.1f} at ({cx:.1f}, {cy:.1f})')
+    return ' '.join(out)
 
 
 def svg(view, paths, extra=''):
@@ -269,20 +223,20 @@ def build(variant):
     pad = 2
     if variant == 'inside':  # "HSI" in the swoosh opening, inside the sphere
         return svg((-R - pad, -R - pad, R + pad, R + pad), mark + [(place_label(), RED)])
-    if variant.startswith('cap-'):  # stylized "HSI" filling the top-left slice
-        # (extra depth of the top cut, gap to the upper piece, edge margin, x condensing, letter spacing, weight, uniform size)
-        depth, gap, edge, xscale, spacing, weight, uniform = {
-            'cap-a': (0, 6.0, 2.0, 0.72, 0.06, 800, False),  # card cut, middle "S" bigger
-            'cap-b': (0, 6.0, 2.0, 0.78, 0.10, 800, True),  # card cut, same size
-            'cap-c': (10, 7.0, 2.0, 0.78, 0.06, 800, False),  # deeper cut, middle "S" bigger
-            'cap-d': (10, 7.0, 2.0, 0.82, 0.12, 800, True),  # deeper cut, same size
-            'cap-e': (16, 8.0, 2.0, 0.90, 0.22, 900, True),  # deepest cut, heavy letters a bit apart
+    if variant.startswith('neg-'):  # "HSI" knocked out (negative) of the lower slice, horizontal
+        # (horizontal position: 'center' or 'best', weight, tracking in caps, size relative to the largest that fits)
+        # (vertical placement: 'low' = as big as fits, 'mid' = middle of the slice height; weight, tracking, scale, margin)
+        where, weight, tracking, scale, margin = {
+            'neg-a': ('low', 800, 0.04, 1.0, 7.0),  # centered, as big as fits
+            'neg-b': ('low', 800, 0.04, 1.0, 4.0),  # bigger, closer to the edge
+            'neg-c': ('low', 900, 0.14, 1.0, 7.0),  # heavier, a bit apart
+            'neg-d': ('low', 700, 0.32, 0.72, 7.0),  # smaller, widely spaced
         }[variant]
-        rc = RC + depth
-        mark = [(upper_piece(CC, rc), RED), (piece(CB, RB, keep_inside=False), RED)]
-        label, caps = cap_label(gap, spacing, edge, xscale, weight, None, CC, rc, uniform)
-        print(f'  {variant}: cap heights', [round(c, 1) for c in caps])
-        return svg((-R - pad, -R - pad, R + pad, R + pad), mark + [(label, RED)])
+        lower = piece(CB, RB, keep_inside=False)
+        label = neg_label(where, weight, tracking, scale, margin)
+        # even-odd fill turns the letters into holes in the lower slice
+        body = f'<path fill="{RED}" d="{upper_piece()}"/><path fill="{RED}" fill-rule="evenodd" d="{lower} {label}"/>'
+        return svg((-R - pad, -R - pad, R + pad, R + pad), [], body)
     if variant == 'mark':  # sphere only (favicon, app footers)
         return svg((-R - pad, -R - pad, R + pad, R + pad), mark)
     if variant == 'side':  # big "HSI" to the right of the sphere
@@ -315,7 +269,7 @@ def build(variant):
     raise SystemExit(f'unknown variant {variant}')
 
 
-VARIANTS = ['cap-a', 'cap-b', 'cap-c', 'cap-d', 'cap-e', 'inside', 'mark', 'side', 'exit', 'below', 'lockup']
+VARIANTS = ['neg-a', 'neg-b', 'neg-c', 'neg-d', 'inside', 'mark', 'side', 'exit', 'below', 'lockup']
 
 
 def main():
