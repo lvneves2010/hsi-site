@@ -13,6 +13,8 @@
   --shadow: 0 1px 2px rgb(26 29 36 / 0.05), 0 8px 24px rgb(26 29 36 / 0.07);
   --shadow-lg: 0 20px 50px rgb(26 29 36 / 0.16);
   --radius: 18px;
+  --sparkle: rgb(200 16 46 / 0.45);
+  --dot: rgb(200 16 46 / 0.16);
   color-scheme: light;
 }
 
@@ -29,6 +31,8 @@
   --accent-text: #15171c;
   --shadow: none;
   --shadow-lg: 0 20px 50px rgb(0 0 0 / 0.4);
+  --sparkle: rgb(255 170 180 / 0.8);
+  --dot: rgb(255 255 255 / 0.12);
   color-scheme: dark;
 }
 
@@ -402,6 +406,55 @@ code {
 .section {
   padding: 80px 0;
 }
+.hero,
+.section,
+.page-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Faint dot texture in one corner of each section, fading out (as in the founder's portfolio) */
+.section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.6px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(28% 40% at 92% 30%, #000, transparent 75%);
+}
+#process::after,
+#contact::after {
+  mask-image: radial-gradient(28% 40% at 8% 60%, #000, transparent 75%);
+}
+
+/* Small twinkling four-point stars scattered behind the content */
+.sparkles {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sparkle {
+  position: absolute;
+  fill: var(--sparkle);
+  filter: drop-shadow(0 0 4px var(--sparkle));
+  opacity: 0.35;
+  animation: twinkle ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.65) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(20deg);
+  }
+}
 .section-alt {
   background: var(--bg-alt);
 }
@@ -749,6 +802,10 @@ code {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  .sparkle {
+    animation: none;
+    opacity: 0.6;
   }
 }
 

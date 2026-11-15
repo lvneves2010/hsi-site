@@ -1,6 +1,7 @@
 import { apps, company, playUrl, serviceKeys, type AppInfo } from './data/site'
 import { content, type Content, type Lang } from './i18n'
 import { FlagBR, FlagUK } from './Flags'
+import { Sparkles } from './Sparkles'
 import { appPath, homePath, langFromPath, pathIn, privacyPath, resolveRoute, type Route } from './routes'
 
 type T = { t: Content; lang: Lang }
@@ -171,6 +172,7 @@ function Home({ t, lang }: T) {
   return (
     <>
       <section className="hero">
+        <Sparkles seed="hero" count={10} />
         <div className="container hero-inner">
           <div className="hero-text">
             <p className="eyebrow">{h.eyebrow}</p>
@@ -215,6 +217,7 @@ function Home({ t, lang }: T) {
       </section>
 
       <section className="section" id="services">
+        <Sparkles seed="services" />
         <div className="container">
           <h2 className="section-title">{h.servicesTitle}</h2>
           <p className="section-intro">{h.servicesIntro}</p>
@@ -241,6 +244,7 @@ function Home({ t, lang }: T) {
       </section>
 
       <section className="section section-alt" id="process">
+        <Sparkles seed="process" />
         <div className="container">
           <h2 className="section-title">{h.processTitle}</h2>
           <p className="section-intro">{h.processIntro}</p>
@@ -257,6 +261,7 @@ function Home({ t, lang }: T) {
       </section>
 
       <section className="section" id="apps">
+        <Sparkles seed="apps" />
         <div className="container">
           <h2 className="section-title">{h.appsTitle}</h2>
           <p className="section-intro">{h.appsIntro}</p>
@@ -265,6 +270,7 @@ function Home({ t, lang }: T) {
       </section>
 
       <section className="section section-alt" id="about">
+        <Sparkles seed="about" />
         <div className="container about">
           <div>
             <h2 className="section-title">{h.aboutTitle}</h2>
@@ -296,6 +302,7 @@ function Home({ t, lang }: T) {
       </section>
 
       <section className="section" id="contact">
+        <Sparkles seed="contact" count={8} />
         <div className="container">
           <h2 className="section-title">{h.contactTitle}</h2>
           <div className="contact-grid">
@@ -330,6 +337,7 @@ function AppPage({ t, lang, app }: T & { app: AppInfo }) {
   return (
     <>
       <section className="page-hero">
+        <Sparkles seed={`app-${app.slug}`} count={8} />
         <div className="container narrow">
           <Breadcrumb
             label={t.ui.breadcrumb}
