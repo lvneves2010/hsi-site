@@ -231,6 +231,9 @@ def build(variant):
             'neg-b': ('low', 800, 0.04, 1.0, 4.0),  # bigger, closer to the edge
             'neg-c': ('low', 900, 0.14, 1.0, 7.0),  # heavier, a bit apart
             'neg-d': ('low', 700, 0.32, 0.72, 7.0),  # smaller, widely spaced
+            'neg-d1': ('low', 700, 0.32, 0.62, 7.0),  # D, smaller letters
+            'neg-d2': ('low', 700, 0.32, 0.54, 7.0),  # D, even smaller
+            'neg-d3': ('low', 700, 0.32, 0.46, 7.0),  # D, smallest
         }[variant]
         lower = piece(CB, RB, keep_inside=False)
         label = neg_label(where, weight, tracking, scale, margin)
@@ -269,7 +272,7 @@ def build(variant):
     raise SystemExit(f'unknown variant {variant}')
 
 
-VARIANTS = ['neg-a', 'neg-b', 'neg-c', 'neg-d', 'inside', 'mark', 'side', 'exit', 'below', 'lockup']
+VARIANTS = ['neg-a', 'neg-b', 'neg-c', 'neg-d', 'neg-d1', 'neg-d2', 'neg-d3', 'inside', 'mark', 'side', 'exit', 'below', 'lockup']
 
 
 def main():
