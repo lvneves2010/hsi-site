@@ -19,7 +19,7 @@ export const company = {
   logoPng: '/img/logo-hsi-512.png',
   ogImage: { pt: '/img/og-image.jpg', en: '/img/og-image-en.jpg' },
   // Google Search Console HTML-tag token (content="..."). Empty = no tag.
-  googleSiteVerification: '',
+  googleSiteVerification: 'aUqOwpMULz5jXUEqC2DyV17yKP6goe0JalHV3oZNQQk',
   // Date shown on the privacy policies and used as <lastmod> in the sitemap. Update when content changes.
   lastUpdated: '2026-11-15',
 }
