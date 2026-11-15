@@ -28,9 +28,13 @@ CB = (CA[0] + ALONG[0] * SHIFT, CA[1] + ALONG[1] * SHIFT)
 RB = RA + 24.0  # gap: ~18 at the left end, ~26 in the middle, ~29 at the right end (as on the card)
 CAP = 14.0  # cap height of "HSI"
 MARGIN = 2.5
-# Top slice (as on the card): the upper piece is cut by a straight line from the top of the sphere
-# down to the right end of the swoosh, leaving a thin white "slice" on the top right.
-TOP_CUT = math.radians(-96)  # where the cut meets the sphere (-90 = top; screen coordinates, y down)
+# Top-left slice (as on the card): the upper piece is also cut by an arc parallel to the swoosh
+# (center shifted along it), which removes the top-left cap of the sphere. The logo then reads as
+# two curved slices, like an orange cut into segments. The arc meets the sphere at about -172 deg
+# (left) and -88 deg (top), measured on the card.
+CUT_SHIFT = -21.0
+CC = (CA[0] + ALONG[0] * CUT_SHIFT, CA[1] + ALONG[1] * CUT_SHIFT)
+RC = 118.0
 
 
 def lower_y(c, r, x):
@@ -73,16 +77,23 @@ def piece(c, r, keep_inside):
 
 
 def upper_piece():
-    """Sphere ∩ disk A, minus the top slice above the chord from TOP_CUT to the right end of arc A."""
-    p_left, p_right = sorted(circle_intersections((0, 0), R, CA, RA), key=lambda pt: pt[0])
-    top = (R * math.cos(TOP_CUT), R * math.sin(TOP_CUT))
-    away = math.atan2(-CA[1], -CA[0])
-    cut_mid = (CA[0] + RA * math.cos(away), CA[1] + RA * math.sin(away))
+    """Sphere ∩ disk A, minus disk C (the top-left slice)."""
+    ang = lambda pt: math.atan2(pt[1], pt[0])
+    on_sphere = lambda a: (R * math.cos(a), R * math.sin(a))
+    a_left, a_right = sorted(circle_intersections((0, 0), R, CA, RA), key=lambda pt: pt[0])
+    c_left, c_top = sorted(circle_intersections((0, 0), R, CC, RC), key=lambda pt: pt[0])
+    toward = lambda c, r: (c[0] + r * -c[0] / math.hypot(*c), c[1] + r * -c[1] / math.hypot(*c))  # point of the circle facing the sphere center
+    # sphere arcs: top cut end -> right end of A (short way), left end of A -> left cut end (through 180 deg)
+    mid_tr = on_sphere((ang(c_top) + ang(a_right)) / 2)
+    a_l = ang(a_left) % (2 * math.pi)
+    c_l = ang(c_left) % (2 * math.pi)
+    mid_l = on_sphere((a_l + c_l) / 2)
     return (
-        f'M{top[0]:.2f} {top[1]:.2f} '
-        + arc_to((0, 0), R, top, p_left, (-R, 0))
-        + ' '
-        + arc_to(CA, RA, p_left, p_right, cut_mid)
+        f'M{c_top[0]:.2f} {c_top[1]:.2f} '
+        + arc_to((0, 0), R, c_top, a_right, mid_tr) + ' '
+        + arc_to(CA, RA, a_right, a_left, toward(CA, RA)) + ' '
+        + arc_to((0, 0), R, a_left, c_left, mid_l) + ' '
+        + arc_to(CC, RC, c_left, c_top, toward(CC, RC))
         + 'Z'
     )
 
