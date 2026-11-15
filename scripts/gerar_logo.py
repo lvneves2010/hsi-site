@@ -23,10 +23,10 @@ ALONG = (math.cos(TILT), -math.sin(TILT))  # points along the swoosh, to the rig
 D = 170.0
 CA = (NORMAL[0] * D, NORMAL[1] * D)
 RA = D + 12.0
-SHIFT = 10.0
+SHIFT = 20.0
 CB = (CA[0] + ALONG[0] * SHIFT, CA[1] + ALONG[1] * SHIFT)
-RB = RA + 24.0  # gap: ~18 at the left end, ~26 in the middle, ~29 at the right end (as on the card)
-CAP = 14.0  # cap height of "HSI"
+RB = RA + 28.6  # gap: ~17 at the left end, ~27 in the middle, ~39 at the right end, where "HSI" sits
+CAP = 13.0  # cap height of "HSI"
 MARGIN = 2.5
 # Top-left slice (as on the card): the upper piece is also cut by an arc parallel to the swoosh
 # (center shifted along it), which removes the top-left cap of the sphere. The logo then reads as
@@ -118,29 +118,18 @@ def text_path(text, height, origin, tangent, up):
 
 
 def place_label():
-    """Put "HSI" along the swoosh, as far right as it fits inside the opening and the sphere."""
-    width = CAP * 2.25  # approximate advance of "HSI" in Inter Bold
-    inside = lambda p: (
-        math.dist(p, CA) >= RA + MARGIN and math.dist(p, CB) <= RB - MARGIN and math.hypot(*p) <= R - MARGIN
-    )
-    # walk along circle A from its right end (angles decrease towards the right/up side)
-    for i in range(0, 3000):
-        ang = math.radians(90 - i * 0.05)
-        n = (math.cos(ang), math.sin(ang))  # from CA into the gap
-        x = (CA[0] + RA * n[0], CA[1] + RA * n[1])
-        if math.hypot(*x) > R:
+    """Put "HSI" horizontally (as on the card) in the opening of the swoosh, as far right as it fits."""
+    width = CAP * 2.3  # approximate advance of "HSI" in Inter Bold
+    for xr10 in range(990, 0, -5):
+        xr = xr10 / 10
+        xl = xr - width
+        base = lower_y(CB, RB, xr) - MARGIN  # lower edge of the gap rises to the right: tightest at xr
+        top = base - CAP
+        if top < lower_y(CA, RA, xl) + MARGIN:  # upper edge of the gap is lowest at xl
             continue
-        t = (-n[1], n[0])  # tangent pointing right/up along the swoosh
-        if t[0] < 0:
-            t = (-t[0], -t[1])
-        up = (-n[0], -n[1])
-        gap = RB - math.dist(x, CB)
-        off = (gap - CAP) / 2  # center the text across the gap
-        base_r = (x[0] + n[0] * (off + CAP), x[1] + n[1] * (off + CAP))
-        base_l = (base_r[0] - t[0] * width, base_r[1] - t[1] * width)
-        corners = [base_l, base_r, (base_l[0] + up[0] * CAP, base_l[1] + up[1] * CAP), (base_r[0] + up[0] * CAP, base_r[1] + up[1] * CAP)]
-        if all(inside(c) for c in corners):
-            return text_path('HSI', CAP, base_l, t, up)
+        if any(math.hypot(x, y) > R - MARGIN for x in (xl, xr) for y in (top, base)):
+            continue
+        return text_path('HSI', CAP, (xl, base), (1, 0), (0, -1))
     raise SystemExit('label does not fit')
 
 
