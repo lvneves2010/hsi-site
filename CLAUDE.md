@@ -3,6 +3,7 @@
 Site da **Help Soluções em Informática (HSI)**, a empresa de Leonardo Neves (CNPJ 31.412.990/0001-07). Apresenta os **serviços** da empresa (software sob encomenda, sites, apps, integrações/ERP, cloud, IA, consultoria, suporte e treinamento), os **apps Android próprios** e hospeda a **política de privacidade de cada app** (URL exigida pela Google Play). O site não deve parecer só de apps: os serviços vêm primeiro. Vite + React 19 + TypeScript, pré-renderizado em HTML estático e publicado no Firebase Hosting. Mesmo esquema do `leoneves-site` (pasta irmã), que é o portfólio pessoal; os dois sites têm links um para o outro.
 
 - Produção: https://hsi-help-solucoes.web.app
+- Repositório: https://github.com/lvneves2010/hsi-site (público). O push usa a conta pessoal: remote `https://lvneves2010@github.com/...`.
 - Firebase: projeto `hsi-help-solucoes` (plano Spark, gratuito), conta lvneves2010@gmail.com. O ID `helpsolucoes` já estava tomado.
 - Bilíngue: PT em `/` (`/apps/<slug>/`, `/apps/<slug>/privacidade/`) e EN em `/en/` (`/en/apps/<slug>/`, `/en/apps/<slug>/privacy/`), com `hreflang` e sitemap com alternates.
 
