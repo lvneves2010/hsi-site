@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { renderToString } from 'react-dom/server'
 import App from './App'
-import { company } from './data/site'
+import { company, services } from './data/site'
 import { appPath, resolveRoute, routes } from './routes'
 
 export { company, routes }
@@ -24,6 +24,10 @@ const organization = {
   url: company.siteUrl + '/',
   logo: company.siteUrl + company.logo,
   email: company.email,
+  foundingDate: company.foundingDate,
+  areaServed: 'BR',
+  knowsAbout: services.flatMap(s => s.tech),
+  makesOffer: services.map(s => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.title, description: s.text } })),
   founder: { '@type': 'Person', name: company.founder, url: company.founderUrl },
   address: { '@type': 'PostalAddress', addressLocality: company.city, addressRegion: company.state, addressCountry: 'BR' },
 }
@@ -36,10 +40,13 @@ export function head(path: string) {
 
   if (route.kind === 'home') {
     return {
-      title: `${company.name} (${company.shortName}) · Apps para Android`,
+      title: `${company.name} (${company.shortName}) · Software, sites e apps em ${company.city}`,
       description:
-        'HSI – Help Soluções em Informática: apps para Android como PlanEvento, Marcador de Jogos, K.I.R.A. e My Spot. ' +
-        'Sem cadastro, com os dados guardados no seu celular.',
+        `HSI – Help Soluções em Informática, desde ${company.foundingYear} em ${company.city}–${company.state}: software sob encomenda, ` +
+        'sites, apps para celular, integrações, cloud e consultoria em TI. Apps próprios: PlanEvento, Marcador de Jogos, K.I.R.A. e My Spot.',
+      keywords:
+        'desenvolvimento de software, software sob encomenda, criação de sites, desenvolvimento de apps, consultoria em TI, ' +
+        `integração de sistemas, ${company.city}, HSI, Help Soluções em Informática`,
       url,
       ogType: 'website',
       ogImage: company.siteUrl + company.ogImage,

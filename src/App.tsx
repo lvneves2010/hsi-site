@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { apps, company, playUrl, type AppInfo } from './data/site'
+import { apps, company, playUrl, services, type AppInfo } from './data/site'
+import { Icon } from './Icons'
 import { appPath, privacyPath, resolveRoute } from './routes'
 
 function Header() {
@@ -14,6 +15,7 @@ function Header() {
           </span>
         </a>
         <nav className="nav" aria-label="Principal">
+          <a href="/#servicos">Serviços</a>
           <a href="/#apps">Apps</a>
           <a href="/#sobre">Sobre</a>
           <a href="/#contato">Contato</a>
@@ -79,23 +81,26 @@ function AppIcon({ app, size }: { app: AppInfo; size: number }) {
 }
 
 function Home() {
+  const quote = `mailto:${company.email}?subject=${encodeURIComponent('Orçamento')}`
   return (
     <>
       <section className="hero">
         <div className="container hero-inner">
           <div>
-            <p className="eyebrow">{company.shortName} · Apps para Android</p>
+            <p className="eyebrow">
+              {company.shortName} · Desde {company.foundingYear} · {company.city} – {company.state}
+            </p>
             <h1>{company.name}</h1>
             <p className="lead">
-              Apps simples e úteis para o dia a dia: organizar eventos, marcar o placar do jogo, achar o carro no
-              estacionamento e falar com uma assistente por voz.
+              Desenvolvimento de software sob encomenda, sites, apps para celular, integrações e consultoria em TI, com a
+              experiência de mais de 20 anos em tecnologia do nosso fundador.
             </p>
             <div className="hero-actions">
-              <a className="btn" href="#apps">
-                Conheça os apps
+              <a className="btn" href="#servicos">
+                Nossos serviços
               </a>
-              <a className="btn btn-ghost" href="#contato">
-                Fale com a gente
+              <a className="btn btn-ghost" href={quote}>
+                Peça um orçamento
               </a>
             </div>
           </div>
@@ -103,9 +108,34 @@ function Home() {
         </div>
       </section>
 
+      <section className="section" id="servicos">
+        <div className="container">
+          <h2 className="section-title">O que fazemos</h2>
+          <div className="service-grid">
+            {services.map(s => (
+              <article key={s.title} className="card service-card">
+                <span className="service-icon">
+                  <Icon name={s.icon} />
+                </span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+                <ul className="chips" aria-label="Tecnologias">
+                  {s.tech.map(t => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="section" id="apps">
         <div className="container">
-          <h2 className="section-title">Nossos apps</h2>
+          <h2 className="section-title">Apps próprios</h2>
+          <p className="section-intro muted">
+            Além dos projetos para clientes, a {company.shortName} desenvolve e publica os seus próprios apps para Android.
+          </p>
           <div className="app-grid">
             {apps.map(app => (
               <a key={app.slug} className="card app-card" href={appPath(app)}>
@@ -126,23 +156,32 @@ function Home() {
         <div className="container narrow">
           <h2 className="section-title">Sobre a {company.shortName}</h2>
           <p>
-            A {company.name} ({company.shortName}) é uma empresa de software de {company.city} – {company.state}. Criamos
-            apps que resolvem uma coisa só, e bem: sem cadastro, sem complicação e, sempre que possível, com os seus dados
-            guardados apenas no seu celular.
+            A {company.name} ({company.shortName}) é uma empresa de tecnologia de {company.city} – {company.state}, aberta em{' '}
+            {company.foundingYear}. Ela formalizou a consultoria que o nosso fundador mantinha desde 2013, que desenvolveu
+            aplicações web para mais de 20 empresas no Brasil, na Argentina, no Peru e na Colômbia.
           </p>
           <p>
-            A empresa foi fundada por <a href={company.founderUrl}>{company.founder}</a>, engenheiro de software sênior com
-            mais de 20 anos em tecnologia.
+            O fundador, <a href={company.founderUrl}>{company.founder}</a>, é engenheiro de software sênior com mais de 20
+            anos em tecnologia e passagens por empresas como IBM, Sony, Bradesco e Jadlog. Trabalha com desenvolvimento full
+            stack, arquitetura de software, integração de sistemas, ERP, DevOps e desenvolvimento assistido por IA.
+          </p>
+          <p>
+            Nos nossos apps, seguimos uma regra simples: resolver uma coisa só, e bem, sem cadastro e, sempre que possível,
+            com os seus dados guardados apenas no seu celular.
           </p>
         </div>
       </section>
 
       <section className="section" id="contato">
         <div className="container narrow">
-          <h2 className="section-title">Contato e suporte</h2>
+          <h2 className="section-title">Contato</h2>
           <p>
-            Encontrou um problema, tem uma sugestão ou quer pedir a exclusão de dados? Escreva para{' '}
-            <a href={`mailto:${company.email}`}>{company.email}</a> e diga qual app você usa.
+            <strong>Tem um projeto?</strong> Conte o que você precisa para{' '}
+            <a href={quote}>{company.email}</a> e responderemos com uma proposta.
+          </p>
+          <p>
+            <strong>Usa um dos nossos apps?</strong> Para suporte, sugestões ou pedidos sobre os seus dados, escreva para o
+            mesmo e-mail e diga qual app você usa.
           </p>
         </div>
       </section>

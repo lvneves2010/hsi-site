@@ -361,3 +361,51 @@ code {
 .nowrap {
   white-space: nowrap;
 }
+
+/* Services */
+.section-intro {
+  margin: -12px 0 24px;
+}
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 16px;
+}
+.service-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.service-card h3 {
+  font-size: 1.05rem;
+  margin: 12px 0 6px;
+}
+.service-card p {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.service-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.chips {
+  list-style: none;
+  padding: 0;
+  margin: auto 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chips li {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}

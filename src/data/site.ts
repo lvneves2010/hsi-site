@@ -12,6 +12,9 @@ export const company = {
   founder: 'Leonardo Neves',
   founderUrl: 'https://leoneves-eng-de-software.web.app/',
   siteUrl: 'https://hsi-help-solucoes.web.app',
+  // From the public CNPJ record (Receita Federal): activity start date.
+  foundingDate: '2018-09-03',
+  foundingYear: '2018',
   logo: '/img/logo-hsi-512.png',
   ogImage: '/img/og-image.jpg',
   // Google Search Console HTML-tag token (content="..."). Empty = no tag.
@@ -21,7 +24,62 @@ export const company = {
   lastUpdatedLabel: '15 de novembro de 2026',
 }
 
-export type Permission = { name: string; why: string }
+export type ServiceIcon = 'code' | 'web' | 'mobile' | 'plug' | 'cloud' | 'ai' | 'compass' | 'wrench'
+export type Service = { icon: ServiceIcon; title: string; text: string; tech: string[] }
+
+/** Services offered (CNAEs of the company + the founder's experience). */
+export const services: Service[] = [
+  {
+    icon: 'code',
+    title: 'Sistemas sob encomenda',
+    text: 'Sistemas web e APIs feitos sob medida para o seu negócio, do levantamento de requisitos à produção.',
+    tech: ['C#/.NET', 'Java', 'Node.js', 'Python'],
+  },
+  {
+    icon: 'web',
+    title: 'Sites e aplicações web',
+    text: 'Sites institucionais, portfólios e aplicações web rápidas, responsivas e preparadas para aparecer no Google.',
+    tech: ['React', 'Angular', 'Vue', 'SEO'],
+  },
+  {
+    icon: 'mobile',
+    title: 'Apps para celular',
+    text: 'Apps Android e iOS, da ideia à publicação na loja, com a mesma experiência dos nossos apps próprios.',
+    tech: ['Ionic', 'Capacitor', 'Flutter'],
+  },
+  {
+    icon: 'plug',
+    title: 'Integrações e ERP',
+    text: 'Integração entre sistemas por APIs e customização de ERP e plataformas corporativas.',
+    tech: ['REST', 'Infor LN', 'Salesforce', 'ServiceNow'],
+  },
+  {
+    icon: 'cloud',
+    title: 'Cloud e DevOps',
+    text: 'Hospedagem, automação de infraestrutura e entrega contínua, para publicar com segurança e sem sustos.',
+    tech: ['Docker', 'Terraform', 'CI/CD', 'AWS · GCP · Firebase'],
+  },
+  {
+    icon: 'ai',
+    title: 'Inteligência artificial',
+    text: 'Chatbots, assistentes e consultas a dados em linguagem natural, integrados aos seus sistemas.',
+    tech: ['LLMs', 'NLP', 'Watson', 'Gemini'],
+  },
+  {
+    icon: 'compass',
+    title: 'Consultoria em TI',
+    text: 'Arquitetura de software, escolha de tecnologia, revisão de código e planejamento de projetos.',
+    tech: ['Arquitetura', 'Scrum', 'ITIL'],
+  },
+  {
+    icon: 'wrench',
+    title: 'Suporte, manutenção e treinamento',
+    text: 'Manutenção de sistemas existentes, suporte técnico e treinamento em informática para equipes.',
+    tech: ['Manutenção', 'Suporte', 'Treinamento'],
+  },
+]
+
+export type Permission ={ name: string; why: string }
 export type ThirdParty = { name: string; what: string; policyUrl: string }
 
 export type AppInfo = {
