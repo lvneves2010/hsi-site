@@ -4,10 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--head-->
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/logo-hsi.svg" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#b2181e" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#c8102e" />
+    <script>
+      // Light theme by default; dark only if the visitor chose it with the toggle. Runs before first paint.
+      ;(function () {
+        var t
+        try { t = localStorage.getItem('theme') } catch (e) {}
+        var d = document.documentElement
+        d.dataset.theme = t === 'dark' ? 'dark' : 'light'
+        d.classList.add('js')
+      })()
+    </script>
   </head>
   <body>
     <div id="root"><!--app--></div>

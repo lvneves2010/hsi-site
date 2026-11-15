@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
+    "logo": "python scripts/gerar_logo.py",
     "images": "python scripts/gerar_imagens.py",
     "deploy": "npm run build && firebase deploy --only hosting"
   },

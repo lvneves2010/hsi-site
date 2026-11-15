@@ -4,7 +4,7 @@ Site da **Help Soluções em Informática (HSI)**, a empresa de Leonardo Neves (
 
 - Produção: https://hsi-help-solucoes.web.app
 - Firebase: projeto `hsi-help-solucoes` (plano Spark, gratuito), conta lvneves2010@gmail.com. O ID `helpsolucoes` já estava tomado.
-- Só português, por enquanto.
+- Bilíngue: PT em `/` (`/apps/<slug>/`, `/apps/<slug>/privacidade/`) e EN em `/en/` (`/en/apps/<slug>/`, `/en/apps/<slug>/privacy/`), com `hreflang` e sitemap com alternates.
 
 ## Comandos
 
@@ -13,7 +13,8 @@ npm run dev       # dev server (http://localhost:5173), renderiza só no cliente
 npm run build     # tsc + build do cliente + build SSR + scripts/prerender.mjs → dist/
 npm run preview   # serve dist/
 npm run lint      # ESLint
-npm run images    # regera as imagens de public/ a partir do logo e dos ícones dos apps (Python + Pillow)
+npm run logo      # redesenha public/logo-hsi.svg (Python + fontTools)
+npm run images    # gera PNGs do logo (Edge headless), ícones dos apps, fotos e og-image PT/EN (Python + Pillow)
 npm run deploy    # build + firebase deploy --only hosting
 ```
 
@@ -23,13 +24,15 @@ Antes de publicar: `npm run build` e `npx eslint .` sem erros. Depois, confira o
 
 | Arquivo | Conteúdo |
 | --- | --- |
-| `src/data/site.ts` | **Todo o conteúdo**: dados da empresa (`company`), serviços (`services`) e um item por app (`apps`), com textos, recursos e dados da política de privacidade |
-| `src/Icons.tsx` | Ícones SVG inline dos serviços |
-| `src/routes.ts` | Lista de páginas: `/`, `/apps/<slug>/` e `/apps/<slug>/privacidade/` |
+| `src/data/site.ts` | Dados sem idioma: empresa (`company`), ordem dos serviços (`serviceKeys`) e apps (`apps`: slug, pacote, publicado) |
+| `src/i18n/pt.tsx` / `en.tsx` | **Todo o texto** em cada idioma: home, serviços, apps, política de privacidade, SEO. O tipo `Content` (`types.ts`) obriga os dois a andarem juntos |
+| `src/routes.ts` | Lista de páginas nos dois idiomas; `pathIn()` dá a mesma página no outro idioma |
 | `src/App.tsx` | Componentes de todas as páginas (home, página do app, política de privacidade) |
 | `src/entry-server.tsx` | `render(path)` e `head(path)`: título, descrição e JSON-LD (`Organization`, `MobileApplication`, `BreadcrumbList`) |
 | `scripts/prerender.mjs` | Gera um `index.html` por rota, o `sitemap.xml` e o `robots.txt` |
-| `scripts/gerar_imagens.py` | Gera logo, favicon, ícones dos apps e `og-image.jpg` a partir das pastas dos apps |
+| `scripts/gerar_logo.py` | Desenha o logo em vetor (`public/logo-hsi.svg`) |
+| `scripts/gerar_imagens.py` | PNGs do logo, ícones dos apps, fotos (cache em `scripts/.cache/`, fora do git) e `og-image*.jpg` |
+| `src/main.tsx` | Só JS simples: botão de tema, menu do celular e animação ao rolar. Sem React em produção |
 | `public/` | Imagens, favicon e `404.html` |
 
 ## Regras
@@ -38,11 +41,13 @@ Antes de publicar: `npm run build` e `npx eslint .` sem erros. Depois, confira o
 - Empresas como IBM, Sony, Bradesco e Jadlog aparecem só como **carreira do fundador**, nunca como clientes da HSI.
 
 - **Em produção as páginas não carregam React**: são HTML estático e não há nenhuma interatividade. `src/main.tsx` só importa CSS e fonte; o React roda no cliente apenas no `npm run dev`. Se um dia precisar de interatividade, use `hydrateRoot` como no `leoneves-site`.
-- Tema claro/escuro segue o sistema (`prefers-color-scheme`), só com CSS.
-- **Novo app:** adicione o item em `apps` (`site.ts`), coloque o caminho do ícone em `APPS` no `gerar_imagens.py` e rode `npm run images`. Rotas, sitemap e rodapé saem sozinhos.
+- **Tema claro por padrão**, mesmo com o navegador em modo escuro (pedido do Leonardo). O escuro só entra pelo botão do topo e fica salvo no `localStorage`; o script inline do `index.html` aplica antes do primeiro paint.
+- **Logo:** `public/logo-hsi.svg` é a versão moderna do logo do cartão de visita (esfera vermelha cortada por uma faixa curva, "HSI" na abertura da direita, acompanhando a faixa). Geometria em `gerar_logo.py`; texto em Inter Bold convertido em contorno. Depois de mudar, rode `npm run logo && npm run images`. **Os apps ainda usam o logo antigo** (`logo_hsi.png` em cada app): o Leonardo quer aprovar o novo no site antes de trocar nos apps.
+- **Fotos:** só do Wikimedia Commons com licença **CC0 ou domínio público**; registre cada uma em `public/img/services/CREDITS.md`. Três vêm do `leoneves-site` (integração, cloud, IA).
+- **Novo app:** adicione o item em `apps` (`site.ts`), os textos em `pt.tsx` e `en.tsx` (o TypeScript acusa o que faltar), o ícone em `APPS` no `gerar_imagens.py` e rode `npm run images`. Rotas, sitemap e rodapé saem sozinhos.
 - **App publicado na Play:** mude `published` para `true`. O botão "Em breve" vira o link da Play e o JSON-LD ganha `installUrl`.
 - **Mudou o conteúdo ou uma política:** atualize `lastUpdated` e `lastUpdatedLabel` em `company`. A data aparece nas políticas e vai para o `<lastmod>` do sitemap.
-- **A política de privacidade precisa bater com o app.** Se um app ganhar permissão, SDK ou serviço novo (ex.: o proxy da IA do K.I.R.A.), atualize `privacy` dele e o formulário "Segurança dos dados" da Play.
+- **A política de privacidade precisa bater com o app.** Se um app ganhar permissão, SDK ou serviço novo (ex.: o proxy da IA do K.I.R.A.), atualize `privacy` dele **nos dois idiomas** e o formulário "Segurança dos dados" da Play.
 - **Google Search Console:** o token da metatag vai em `company.googleSiteVerification`.
 - **app-ads.txt:** quando a conta AdMob existir, crie `public/app-ads.txt` com a linha `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0` (com o ID de editor real) e publique.
 - O FestaSim (`com.leo.festasim`) fica de fora: foi substituído pelo PlanEvento.
